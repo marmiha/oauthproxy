@@ -5,11 +5,17 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gume1a/oauth-proxy/internal/registry"
+	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+	// Read the ascii art and print it.
+	f, _ := os.Open("./assets/terminal/logo_banner.txt")
+	_, _ = io.Copy(os.Stdout, f)
+
 	registrar := registry.GetRegistry()
 
 	r := chi.NewRouter()

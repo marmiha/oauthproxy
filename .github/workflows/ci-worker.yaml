@@ -21,4 +21,4 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
-            - Dsonar.projectKey=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj
+            -Dsonar.projectKey=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj

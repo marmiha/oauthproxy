@@ -37,7 +37,7 @@ providers:
       client_secret: GOOGLE_SECRET
   custom:
     - id: custom
-      client_secret: CUSTOM_CLIENT_SECRET
+      client_secret: CUSTOM_SECRET
       token_endpoint: https://example.com/oauth2/authorize
 ```
 

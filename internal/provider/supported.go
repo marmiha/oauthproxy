@@ -7,11 +7,6 @@ import (
 	"net/url"
 )
 
-var (
-	GITHUB = NewGithub("")
-	GOOGLE = NewGoogle("")
-)
-
 func NewGithub(secret string) Provider {
 	tokenURL, _ := url.Parse(github.Endpoint.TokenURL)
 	return NewProvider(identity.GITHUB, tokenURL, secret)

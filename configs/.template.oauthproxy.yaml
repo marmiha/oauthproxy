@@ -6,7 +6,7 @@ providers:
       client_secret: GITHUB_SECRET
     - id: google
       client_secret: GOOGLE_SECRET
-  other:
+  custom:
     - id: custom
       client_secret: CUSTOM_CLIENT_SECRET
       token_endpoint: https://example.com/oauth2/authorize

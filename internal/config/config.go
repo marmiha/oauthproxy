@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	YamlConfigPath = ".template.oauthproxy.yaml"
+	YamlConfigPath = "oauthproxy.yaml"
 	DefaultPort    = 8081
 	DefaultHost    = "localhost"
 )

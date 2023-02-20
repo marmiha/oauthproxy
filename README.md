@@ -11,7 +11,7 @@ A simple ready to go service, that reverse-proxies your Token endpoint requests 
 attaches the client secret to the request. This is useful for when the Authorization servers don't support the non
 client secret authorization flows but the client application is required to be run on the end-user device.
 
-#### Installation
+### Installation
 
 A valid [installation of Go](https://go.dev/doc/install) is required. This installs the latest version of
 the `oauth-proxy` cmd tool from the master branch.
@@ -20,7 +20,7 @@ the `oauth-proxy` cmd tool from the master branch.
 go install github.com/gume1a/oauth-proxy@latest
 ```
 
-#### Configuration
+### Configuration
 
 The configuration is done via a yaml file and environment variables. The default path is `./oauthconfig.yaml`, if none 
 provided the server will start on `localhost:8081` with no configured providers. Example configuration is as follows:
@@ -58,7 +58,7 @@ CUSTOM_SECRET=custom_secret
 With this configuration, the proxy will be able to handle requests for the `github`, `google` and the `custom` provider.
 Arbitrarily many providers can be configured.
 
-#### Usage
+### Usage
 
 After installation the  server can be started by running the `oauth-proxy` command. The proxy will start listening on 
 the configured host and port.
@@ -77,3 +77,12 @@ $ aouth-proxy
 2023/02/20 08:04:17 PROVIDERS [github google custom]
 2023/02/20 08:04:17 SERVER starting listening on http://localhost:8081
 ```
+
+### Endpoints
+
+The proxy currently exposes two endpoints:
+- `/oauth/<client_id>` - This endpoint is used to get the token for the client with the given id. The client id is the 
+  id of the provider in the configuration file. The request is forwarded to the configured token endpoint and the 
+  client secret is attached to the request. The response is then returned to the client.
+- `/supported` - This endpoint returns a list of the supported providers. The list is the same as the list of the 
+  providers in the configuration file.

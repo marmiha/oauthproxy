@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"github.com/gume1a/oauth-proxy/pkg/identity"
+	"github.com/gume1a/oauthproxy/pkg/identity"
 	"io"
 	"net/http"
 	"net/url"

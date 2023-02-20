@@ -14,10 +14,10 @@ client secret authorization flows but the client application is required to be r
 ### Installation
 
 A valid [installation of Go](https://go.dev/doc/install) is required. This installs the latest version of
-the `oauth-proxy` cmd tool from the master branch.
+the `oauthproxy` cmd tool from the master branch.
 
 ```
-go install github.com/gume1a/oauth-proxy@latest
+go install github.com/gume1a/oauthproxy@latest
 ```
 
 ### Configuration

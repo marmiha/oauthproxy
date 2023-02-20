@@ -1,9 +1,9 @@
 package registry
 
 import (
-	"github.com/gume1a/oauth-proxy/internal/provider"
-	"github.com/gume1a/oauth-proxy/internal/proxy"
-	"github.com/gume1a/oauth-proxy/pkg/identity"
+	"github.com/gume1a/oauthproxy/internal/provider"
+	"github.com/gume1a/oauthproxy/internal/proxy"
+	"github.com/gume1a/oauthproxy/pkg/identity"
 	"net/http"
 )
 

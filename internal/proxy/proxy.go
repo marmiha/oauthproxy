@@ -1,8 +1,8 @@
 package proxy
 
 import (
-	"github.com/gume1a/oauth-proxy/internal/oauthtransport"
-	"github.com/gume1a/oauth-proxy/internal/provider"
+	"github.com/gume1a/oauthproxy/internal/oauthtransport"
+	"github.com/gume1a/oauthproxy/internal/provider"
 	"net/http"
 	"net/http/httputil"
 )

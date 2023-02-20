@@ -1,4 +1,4 @@
-module github.com/gume1a/oauth-proxy
+module github.com/gume1a/oauthproxy
 
 go 1.19
 

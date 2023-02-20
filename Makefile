@@ -15,15 +15,16 @@ help:
 	@echo " \033[36mdocker/run/%\033[0m		# Runs \033[36m${DOCKER_TAG}:%\033[0m image."
 	@echo "------------------------------------------------------------------------"
 
-
 docker/build:
 	@make docker/build/${DOCKER_VERSION}
 
 docker/build/%:
+	@echo "\033[36m[Building]\033[0m ${DOCKER_TAG}:\033[36m${*}\033[0m"
 	@docker build -t ${DOCKER_TAG}:$* -f build/Dockerfile .
 
 docker/run:
 	@make docker/run/${DOCKER_VERSION}
 
 docker/run/%:
+	@echo "\033[36m[Launching]\033[0m ${DOCKER_TAG}:\033[36m${*}\033[0m on port \033[36m${PORT}\033[0m"
 	@docker run -p ${PORT}:8081 ${DOCKER_TAG}:$*

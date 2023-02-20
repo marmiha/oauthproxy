@@ -20,7 +20,8 @@ func main() {
 	// Read the ascii art and print it.
 	f, _ := os.Open("./assets/terminal/logo_banner.txt")
 	_, _ = io.Copy(os.Stdout, f)
-	print("\n\n")
+	_ = f.Close()
+	fmt.Print("\n\n")
 
 	// Router configuration.
 	r := chi.NewRouter()

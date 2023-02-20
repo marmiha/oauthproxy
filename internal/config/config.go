@@ -60,7 +60,6 @@ func Get() Config {
 
 		// Lookup environment overrides.
 		if host, ok := os.LookupEnv("HOST"); ok {
-			fmt.Printf("host: %s", host)
 			config.Host = host
 		}
 

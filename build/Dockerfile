@@ -2,10 +2,14 @@
 # Build command: make docker/build
 FROM golang:1.19.6-alpine AS builder
 WORKDIR /src
+
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
-COPY . .
+COPY ./internal/ ./internal
+COPY ./pkg/ ./pkg
+COPY ./main.go ./main.go
+
 RUN go build -v -o /usr/local/bin/oauthproxy main.go
 
 # Runtime image

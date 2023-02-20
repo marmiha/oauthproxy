@@ -50,44 +50,47 @@ type (
 var config *Config
 
 func Get() Config {
-	if config == nil {
-		config = &Config{}
+	if config != nil {
+		return *config
+	}
 
-		data, err := os.ReadFile(YamlConfigPath)
-		if err != nil && !os.IsNotExist(err) {
-			panic(err)
-		}
+	config = &Config{}
 
-		// Lookup environment overrides.
-		if host, ok := os.LookupEnv("HOST"); ok {
-			config.Host = host
-		}
+	data, err := os.ReadFile(YamlConfigPath)
+	if err != nil && !os.IsNotExist(err) {
+		panic(err)
+	}
 
-		if portString, ok := os.LookupEnv("PORT"); ok {
-			port, err := strconv.Atoi(portString)
-			if err != nil {
-				panic(err)
-			}
-			config.Port = port
-		}
+	// Lookup environment overrides.
+	if host, ok := os.LookupEnv("HOST"); ok {
+		config.Host = host
+	}
 
-		// Set default values.
-		if os.IsNotExist(err) {
-			if config.Host == "" {
-				config.Host = DefaultHost
-			}
-			if config.Port == 0 {
-				config.Port = DefaultPort
-			}
-			return *config
-		}
-
-		// Otherwise, parse the config file.
-		err = yaml.Unmarshal(data, config)
+	if portString, ok := os.LookupEnv("PORT"); ok {
+		port, err := strconv.Atoi(portString)
 		if err != nil {
 			panic(err)
 		}
+		config.Port = port
 	}
+
+	// Set default values.
+	if os.IsNotExist(err) {
+		if config.Host == "" {
+			config.Host = DefaultHost
+		}
+		if config.Port == 0 {
+			config.Port = DefaultPort
+		}
+		return *config
+	}
+
+	// Otherwise, parse the config file.
+	err = yaml.Unmarshal(data, config)
+	if err != nil {
+		panic(err)
+	}
+
 	return *config
 }
 

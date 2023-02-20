@@ -25,9 +25,6 @@ ENV HOST "0.0.0.0"
 
 RUN addgroup -S runner \
     && adduser -S runner -G runner
-
 USER runner
-
-
 
 ENTRYPOINT ["oauthproxy"]

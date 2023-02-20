@@ -7,6 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"net/url"
 	"os"
+	"strconv"
 )
 
 const (
@@ -57,10 +58,28 @@ func Get() Config {
 			panic(err)
 		}
 
+		// Lookup environment overrides.
+		if host, ok := os.LookupEnv("HOST"); ok {
+			fmt.Printf("host: %s", host)
+			config.Host = host
+		}
+
+		if portString, ok := os.LookupEnv("PORT"); ok {
+			port, err := strconv.Atoi(portString)
+			if err != nil {
+				panic(err)
+			}
+			config.Port = port
+		}
+
 		// Set default values.
 		if os.IsNotExist(err) {
-			config.Host = DefaultHost
-			config.Port = DefaultPort
+			if config.Host == "" {
+				config.Host = DefaultHost
+			}
+			if config.Port == 0 {
+				config.Port = DefaultPort
+			}
 			return *config
 		}
 

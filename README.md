@@ -81,8 +81,24 @@ $ aouth-proxy
 ### Endpoints
 
 The proxy currently exposes two endpoints:
+
 - `/oauth/<client_id>` - This endpoint is used to get the token for the client with the given id. The client id is the 
   id of the provider in the configuration file. The request is forwarded to the configured token endpoint and the 
   client secret is attached to the request. The response is then returned to the client.
 - `/supported` - This endpoint returns a list of the supported providers. The list is the same as the list of the 
   providers in the configuration file.
+
+### Development
+
+All the basic commands are in the `Makefile`.
+
+```sh
+------------------------------------------------------------------------
+Container commands:
+ docker/build           # Builds oauthproxy:latest image.
+ docker/build/%         # Builds oauthproxy:% image.
+
+ docker/run             # Runs oauthproxy:latest image.
+ docker/run/%           # Runs oauthproxy:% image.
+------------------------------------------------------------------------
+```

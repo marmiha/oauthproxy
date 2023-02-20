@@ -9,11 +9,13 @@ RUN go mod download && go mod verify
 COPY ./internal/ ./internal
 COPY ./pkg/ ./pkg
 COPY ./main.go ./main.go
+COPY ./assets ./assets
 
 RUN go build -v -o /usr/local/bin/oauthproxy main.go
 
 # Runtime image
 FROM alpine:latest AS runtime
+
 WORKDIR /oauthproxy
 COPY --from=builder /src/assets ./assets
 COPY --from=builder /usr/local/bin/oauthproxy /usr/local/bin/oauthproxy
@@ -21,4 +23,11 @@ COPY --from=builder /usr/local/bin/oauthproxy /usr/local/bin/oauthproxy
 ENV PORT 8081
 ENV HOST "0.0.0.0"
 
-CMD ["oauthproxy"]
+RUN addgroup -S runner \
+    && adduser -S runner -G runner
+
+USER runner
+
+
+
+ENTRYPOINT ["oauthproxy"]

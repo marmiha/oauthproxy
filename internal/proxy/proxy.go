@@ -2,16 +2,15 @@ package proxy
 
 import (
 	"github.com/gume1a/oauth-proxy/internal/oauthtransport"
-	"github.com/gume1a/oauth-proxy/internal/target"
+	"github.com/gume1a/oauth-proxy/internal/provider"
 	"net/http"
 	"net/http/httputil"
-	"net/url"
 )
 
 type (
 	oauthProxy struct {
-		target *url.URL
-		proxy  *httputil.ReverseProxy
+		provider provider.Provider
+		proxy    *httputil.ReverseProxy
 	}
 
 	OAuthProxy interface {
@@ -19,15 +18,15 @@ type (
 	}
 )
 
-func New(trgt *target.Provider) OAuthProxy {
-	proxy := httputil.NewSingleHostReverseProxy(trgt.TokenEndpoint)
+func New(provider provider.Provider) OAuthProxy {
+	proxy := httputil.NewSingleHostReverseProxy(provider.TokenEndpoint)
 	defaultDirector := proxy.Director
 
 	// Director handles the modification of the request before it is sent to the OAut2 server.
 	proxy.Director = func(req *http.Request) {
 		defaultDirector(req)
 		req.Header.Add("X-Proxy", "oauth-proxy")
-		req.Host = trgt.RequestHost
+		req.Host = provider.GetEndpointHost()
 	}
 
 	// Handling of the response.
@@ -39,16 +38,24 @@ func New(trgt *target.Provider) OAuthProxy {
 	proxy.Transport = oauthtransport.NewOauthTransport()
 
 	return &oauthProxy{
-		target: trgt.TokenEndpoint,
-		proxy:  proxy,
+		provider: provider,
+		proxy:    proxy,
 	}
 }
 
 func (p *oauthProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	// Drop the URL path, so that it does not append to the target token endpoint.
-	// If you remove this line, the target path and proxy path will be joined.
+	// Drop the URL path, so that it does not append to the provider token endpoint.
+	// If you remove this line, the provider path and proxy path will be joined.
 	req.URL.Path = ""
 	req.RequestURI = ""
+
+	// Add the client secret to the request.
+	err := p.provider.AddSecret(req)
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		_, _ = rw.Write([]byte(err.Error()))
+		return
+	}
 
 	// Forward the request to the proxy
 	p.proxy.ServeHTTP(rw, req)

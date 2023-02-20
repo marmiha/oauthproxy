@@ -20,3 +20,7 @@
 
 # OS specific
 .DS_Store
+
+# Config files.
+.env
+/oauthproxy.yaml

@@ -1,26 +1,15 @@
 package registry
 
 import (
+	"github.com/gume1a/oauth-proxy/internal/provider"
 	"github.com/gume1a/oauth-proxy/internal/proxy"
-	"github.com/gume1a/oauth-proxy/internal/target"
 	"github.com/gume1a/oauth-proxy/pkg/identity"
 	"net/http"
 )
 
-var handler Registry
-
-func init() {
-	handler = &registry{
-		providerProxyMap: map[identity.ProviderId]proxy.OAuthProxy{
-			identity.GITHUB: proxy.New(&target.GITHUB),
-			identity.GOOGLE: proxy.New(&target.GOOGLE),
-		},
-	}
-}
-
 type (
 	Registry interface {
-		ProxyServeHTTP(rw http.ResponseWriter, req *http.Request)
+		ProxyServeHTTP(providerID identity.ProviderId, rw http.ResponseWriter, req *http.Request)
 		Providers() []identity.ProviderId
 	}
 	registry struct {
@@ -28,18 +17,13 @@ type (
 	}
 )
 
-func init() {
-	handler = &registry{
-		providerProxyMap: map[identity.ProviderId]proxy.OAuthProxy{
-			identity.GITHUB: proxy.New(&target.GITHUB),
-			identity.GOOGLE: proxy.New(&target.GOOGLE),
-		},
+// NewRegistry returns the configured registry of configured (provided) proxies.
+func NewRegistry(providers []provider.Provider) Registry {
+	proxyMap := make(map[identity.ProviderId]proxy.OAuthProxy)
+	for _, p := range providers {
+		proxyMap[p.Id] = proxy.New(p)
 	}
-}
-
-// GetRegistry returns the configured registry of configured (provided) proxies.
-func GetRegistry() Registry {
-	return handler
+	return &registry{providerProxyMap: proxyMap}
 }
 
 // Providers returns the identity.ProviderId-s of the configured providers.
@@ -56,28 +40,15 @@ func (r *registry) Providers() []identity.ProviderId {
 }
 
 // ProxyServeHTTP accepts the incoming request and forwards the request to the right
-// target provider given its identity.ProviderId scraped from the request.
-func (r *registry) ProxyServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	// Get the provider from the request.
-	appId := r.getAppId(req)
-	// toolId := r.getToolId(req)
-
+// provider given its identity.ProviderId scraped from the request.
+func (r *registry) ProxyServeHTTP(providerId identity.ProviderId, rw http.ResponseWriter, req *http.Request) {
 	// Get the proxy for the provider.
-	proxy, ok := r.providerProxyMap[appId]
+	proxy, ok := r.providerProxyMap[providerId]
 	if !ok {
 		rw.WriteHeader(http.StatusNotAcceptable)
-		rw.Write([]byte("Provider not supported"))
+		rw.Write([]byte("provider not supported"))
+		return
 	}
 
 	proxy.ServeHTTP(rw, req)
-}
-
-func (r *registry) getAppId(req *http.Request) identity.ProviderId {
-	// Todo: configure switching based on the request
-	return identity.GITHUB
-}
-
-func (r *registry) getToolId(req *http.Request) identity.ToolId {
-	// Todo: configure switching based on the request
-	return identity.FELTNA
 }

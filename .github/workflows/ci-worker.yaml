@@ -60,7 +60,7 @@ jobs:
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
-            latest=false
+            latest=true
             prefix=
             suffix=
           tags: |

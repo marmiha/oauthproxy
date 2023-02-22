@@ -24,6 +24,7 @@ go install github.com/gume1a/oauthproxy@latest
 You can also download the binary from the [releases page](https://github.com/gume1a/oauthproxy/releases) of the repository.
 Each release contains the binary for the supported platforms.
 
+
 ### Configuration
 
 The configuration is done via a yaml file and environment variables. The default path is `./oauthconfig.yaml`, if none 

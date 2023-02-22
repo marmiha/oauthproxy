@@ -1,4 +1,4 @@
-OAuth Proxy
+oauthproxy
 ===========
 
 ![OAuth Proxy Banner](./assets/static/logo_banner_big.png)
@@ -6,8 +6,9 @@ OAuth Proxy
 [![Maintainability Rating](https://sonarqube.gume1a.com/api/project_badges/measure?project=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj&metric=sqale_rating&token=sqb_ad10b28fe89f2a16c2c9f7899e50e2c6cf192074)](https://sonarqube.gume1a.com/dashboard?id=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj)
 [![Lines of Code](https://sonarqube.gume1a.com/api/project_badges/measure?project=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj&metric=ncloc&token=sqb_ad10b28fe89f2a16c2c9f7899e50e2c6cf192074)](https://sonarqube.gume1a.com/dashboard?id=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj)
 [![Technical Debt](https://sonarqube.gume1a.com/api/project_badges/measure?project=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj&metric=sqale_index&token=sqb_ad10b28fe89f2a16c2c9f7899e50e2c6cf192074)](https://sonarqube.gume1a.com/dashboard?id=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj)
+[![Coverage](https://sonarqube.gume1a.com/api/project_badges/measure?project=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj&metric=coverage&token=sqb_ad10b28fe89f2a16c2c9f7899e50e2c6cf192074)](https://sonarqube.gume1a.com/dashboard?id=gume1a_oauth-proxy_AYZm3vqmPvHIgh4c6jWj)
 
-A simple ready to go service, that reverse-proxies your Token endpoint requests to configured OAuth2 providers and
+A simple ready to Go service, that reverse-proxies your Token endpoint requests to configured OAuth2 providers and
 attaches the client secret to the request. This is useful for when the Authorization servers don't support the non
 client secret authorization flows but the client application is required to be run on the end-user device.
 
@@ -19,6 +20,9 @@ the `oauthproxy` cmd tool from the master branch.
 ```
 go install github.com/gume1a/oauthproxy@latest
 ```
+
+You can also download the binary from the [releases page](https://github.com/gume1a/oauthproxy/releases) of the repository.
+Each release contains the binary for the supported platforms.
 
 ### Configuration
 

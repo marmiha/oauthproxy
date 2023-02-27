@@ -17,13 +17,27 @@ type (
 		redirectURL *url.URL
 	}
 
+	TokenResponse struct {
+		Token *oauth2.Token
+		Err   error
+	}
+
 	Client interface {
-		AuthCodeURL(state string, opts ...oauth2.AuthCodeOption) (string, chan string, chan error)
-		AuthCodeURLCtx(ctx context.Context, state string, opts ...oauth2.AuthCodeOption) (string, chan string, chan error)
+		AuthCodeURL(state string, opts ...oauth2.AuthCodeOption) (string, chan TokenResponse)
+		AuthCodeURLCtx(ctx context.Context, state string, opts ...oauth2.AuthCodeOption) (string, chan TokenResponse)
+		GetClient(ctx context.Context, token *oauth2.Token) *http.Client
 	}
 )
 
-func (c *client) AuthCodeURLCtx(ctx context.Context, state string, opts ...oauth2.AuthCodeOption) (string, chan string, chan error) {
+func (c *client) GetClient(ctx context.Context, token *oauth2.Token) *http.Client {
+	return c.config.Client(ctx, token)
+}
+
+func (c *client) AuthCodeURL(state string, opts ...oauth2.AuthCodeOption) (string, chan TokenResponse) {
+	return c.AuthCodeURLCtx(context.Background(), state, opts...)
+}
+
+func (c *client) AuthCodeURLCtx(ctx context.Context, state string, opts ...oauth2.AuthCodeOption) (string, chan TokenResponse) {
 	if c.transport != nil {
 		ctx = context.WithValue(
 			ctx,
@@ -33,26 +47,25 @@ func (c *client) AuthCodeURLCtx(ctx context.Context, state string, opts ...oauth
 	}
 
 	shutdownCallbackServ := make(chan struct{})
-	errChan := make(chan error)
-	tokenChan := make(chan string)
+	tokenChan := make(chan TokenResponse)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc(c.redirectURL.Path, func(w http.ResponseWriter, r *http.Request) {
 		code := r.FormValue("code")
-		tok, err := c.config.Exchange(
+		token, err := c.config.Exchange(
 			ctx,
 			code,
 		)
 
 		go func() {
 			if err != nil {
-				errChan <- err
+				tokenChan <- TokenResponse{Err: err}
 			} else {
-				tokenChan <- tok.AccessToken
+				tokenChan <- TokenResponse{Token: token}
 			}
 		}()
 
-		_, _ = fmt.Fprintf(w, "Success! You can close this window now.")
+		_, _ = fmt.Fprintf(w, "Successfully authenticated! You can close this window now.")
 		shutdownCallbackServ <- struct{}{}
 	})
 
@@ -78,9 +91,5 @@ func (c *client) AuthCodeURLCtx(ctx context.Context, state string, opts ...oauth
 		close(shutdownCallbackServ)
 	}()
 
-	return c.config.AuthCodeURL(state, opts...), tokenChan, errChan
-}
-
-func (c *client) AuthCodeURL(state string, opts ...oauth2.AuthCodeOption) (string, chan string, chan error) {
-	return c.AuthCodeURLCtx(context.Background(), state, opts...)
+	return c.config.AuthCodeURL(state, opts...), tokenChan
 }

@@ -24,7 +24,7 @@ func main() {
 		WithAuthURL(authURL).
 		Build()
 
-	authUrl, tokenChan, errChan := clt.AuthCodeURL(
+	authUrl, tokenResponseChan := clt.AuthCodeURL(
 		"5ca75bd30",
 		oauth2.AccessTypeOffline,
 	)
@@ -32,14 +32,13 @@ func main() {
 	fmt.Printf("Please authenticate on the following url:\n%s\n", authUrl)
 	_ = open.Start(authUrl)
 
-	log.Printf("waiting for user authentication")
-	var token string
-	select {
-	case token = <-tokenChan:
-		log.Printf("Successfully authenticated")
-	case err := <-errChan:
+	tokenResponse := <-tokenResponseChan
+	if err := tokenResponse.Err; err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf(token)
+	log.Printf("Successfully authenticated")
+	token := tokenResponse.Token
+
+	log.Printf("Got the access token: %v", token.AccessToken)
 }

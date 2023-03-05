@@ -1,8 +1,13 @@
 package main
 
 import (
+	_ "embed"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/fatih/color"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -10,17 +15,13 @@ import (
 	"github.com/gume1a/oauthproxy/internal/registry"
 	"github.com/gume1a/oauthproxy/pkg/identity"
 	"github.com/joho/godotenv"
-	"io"
-	"log"
-	"net/http"
-	"os"
 )
 
+//go:embed assets/terminal/logo_banner.txt
+var terminalAsciiArt string
+
 func main() {
-	// Read the ascii art and print it.
-	f, _ := os.Open("./assets/terminal/logo_banner.txt")
-	_, _ = io.Copy(os.Stdout, f)
-	_ = f.Close()
+	fmt.Print(terminalAsciiArt)
 	fmt.Print("\n\n")
 
 	// Router configuration.

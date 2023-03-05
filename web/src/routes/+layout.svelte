@@ -29,8 +29,8 @@
 </div>
 
 <div class="intro-footer">
-	Another project by <a href="github.com/marmiha">marmiha</a> and
-	<a href="github.com/gume1a/oauthproxy">friends</a>
+	Another project by <a href="http://github.com/marmiha">marmiha</a> and
+	<a href="http://github.com/gume1a/oauthproxy">friends</a>
 </div>
 
 <style>

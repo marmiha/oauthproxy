@@ -25,7 +25,7 @@ func NewProvider(id identity.ProviderId, tokenURL *url.URL, secret string) Provi
 }
 
 func (p *Provider) AddSecret(req *http.Request) error {
-	// Add the client secret to the query parameters.
+	// Add the oauthclient secret to the query parameters.
 	err := req.ParseForm()
 	if err != nil {
 		return err

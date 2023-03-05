@@ -3,17 +3,12 @@ package config
 import (
 	"fmt"
 	"github.com/gume1a/oauthproxy/internal/provider"
+	"github.com/gume1a/oauthproxy/pkg/defaults"
 	"github.com/gume1a/oauthproxy/pkg/identity"
 	"gopkg.in/yaml.v3"
 	"net/url"
 	"os"
 	"strconv"
-)
-
-const (
-	YamlConfigPath = "oauthproxy.yaml"
-	DefaultPort    = 8081
-	DefaultHost    = "localhost"
 )
 
 type (
@@ -34,7 +29,7 @@ type (
 	SupportedProvider struct {
 		// The id of the provider.
 		Id identity.ProviderId `yaml:"id"`
-		// The client secret of the provider.
+		// The oauthclient secret of the provider.
 		ClientSecret string `yaml:"client_secret"`
 	}
 	CustomProvider struct {
@@ -42,7 +37,7 @@ type (
 		Id identity.ProviderId `yaml:"id"`
 		// The token endpoint of the provider.
 		TokenEndpoint string `yaml:"token_endpoint"`
-		// The client secret of the provider.
+		// The oauthclient secret of the provider.
 		ClientSecret string `yaml:"client_secret"`
 	}
 )
@@ -56,17 +51,17 @@ func Get() Config {
 
 	config = &Config{}
 
-	data, err := os.ReadFile(YamlConfigPath)
+	data, err := os.ReadFile(defaults.YamlConfigPath)
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
 	}
 
 	// Lookup environment overrides.
-	if host, ok := os.LookupEnv("HOST"); ok {
+	if host, ok := os.LookupEnv(defaults.ENV_HOST); ok {
 		config.Host = host
 	}
 
-	if portString, ok := os.LookupEnv("PORT"); ok {
+	if portString, ok := os.LookupEnv(defaults.ENV_PORT); ok {
 		port, err := strconv.Atoi(portString)
 		if err != nil {
 			panic(err)
@@ -77,10 +72,10 @@ func Get() Config {
 	// Set default values.
 	if os.IsNotExist(err) {
 		if config.Host == "" {
-			config.Host = DefaultHost
+			config.Host = defaults.DefaultHost
 		}
 		if config.Port == 0 {
-			config.Port = DefaultPort
+			config.Port = defaults.DefaultPort
 		}
 		return *config
 	}
@@ -103,7 +98,7 @@ func (cfg *Config) GetProviders() ([]provider.Provider, error) {
 	var providers []provider.Provider
 
 	for _, entry := range cfg.Providers.Supported {
-		// Get the client secret.
+		// Get the oauthclient secret.
 		secret, ok := os.LookupEnv(entry.ClientSecret)
 		if !ok {
 			return nil, fmt.Errorf("missing environment variable %v", entry.ClientSecret)
@@ -123,7 +118,7 @@ func (cfg *Config) GetProviders() ([]provider.Provider, error) {
 	}
 
 	for _, entry := range cfg.Providers.Custom {
-		// Get the client secret.
+		// Get the oauthclient secret.
 		secret, ok := os.LookupEnv(entry.ClientSecret)
 		if !ok {
 			return nil, fmt.Errorf("missing environment variable %v", entry.ClientSecret)

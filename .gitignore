@@ -17,6 +17,7 @@
 # Editors
 .vscode
 .idea
+oauthproxy.code-workspace
 
 # OS specific
 .DS_Store
@@ -24,3 +25,4 @@
 # Config files.
 .env
 /oauthproxy.yaml
+

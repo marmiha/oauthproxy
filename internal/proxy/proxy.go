@@ -25,7 +25,7 @@ func New(provider provider.Provider) OAuthProxy {
 	// Director handles the modification of the request before it is sent to the OAut2 server.
 	proxy.Director = func(req *http.Request) {
 		defaultDirector(req)
-		req.Header.Add("X-Proxy", "oauthproxy")
+		req.Header.Add("x-proxy", "oauthproxy")
 		req.Host = provider.GetEndpointHost()
 	}
 
@@ -49,7 +49,7 @@ func (p *oauthProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	req.URL.Path = ""
 	req.RequestURI = ""
 
-	// Add the client secret to the request.
+	// Add the oauthclient secret to the request.
 	err := p.provider.AddSecret(req)
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)

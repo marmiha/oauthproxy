@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/gume1a/oauthproxy/pkg/client"
+	"github.com/gume1a/oauthproxy/pkg/defaults"
 	"github.com/gume1a/oauthproxy/pkg/identity"
+	"github.com/gume1a/oauthproxy/pkg/oauthclient"
 	"github.com/skratchdot/open-golang/open"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
@@ -12,11 +13,11 @@ import (
 )
 
 func main() {
-	redirectURL, _ := url.Parse("http://localhost:1420/oauth2/callback")
-	proxyURL, _ := url.Parse("http://localhost:8081")
+	redirectURL, _ := url.Parse("http://127.0.0.1:1420/oauth2/callback")
+	proxyURL, _ := url.Parse(fmt.Sprintf("http://%s:%d", defaults.DefaultHost, defaults.DefaultPort))
 	authURL, _ := url.Parse(github.Endpoint.AuthURL)
 
-	clt := client.
+	clt := oauthclient.
 		NewFactory(identity.GITHUB, "242f79440a257b6370b8").
 		WithScopes([]string{"read:org"}).
 		WithRedirectURL(redirectURL).

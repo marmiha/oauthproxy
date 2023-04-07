@@ -1,4 +1,4 @@
-name: Web Build Worker (Svelte)
+name: CI Worker (Svelte)
 on:
   push:
     tags:
@@ -34,7 +34,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4.16.0
         with:
           commit_message: "chore: build svelte frontend"
-          
+          commit_user_name: "actions[svelte]"
 
 
 

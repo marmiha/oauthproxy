@@ -8,8 +8,7 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			fallback: 'index.html',
-			strict: true
+			fallback: 'index.html'
 		})
 	}
 };

@@ -15,7 +15,7 @@
 </div>
 
 <div id="content">
-	<div>
+	<div id="content-wrapper">
 		<!-- Left Side Content	-->
 		<div id="left-content" class="not-selectable">
 			<Logo />
@@ -23,7 +23,9 @@
 		<!-- Right Side Content	-->
 		<div id="right-content">
 			<h1>oauthproxy</h1>
-			<slot />
+			<div id="right-content-subheader">
+				<slot />
+			</div>
 		</div>
 	</div>
 </div>
@@ -51,10 +53,35 @@
 		display: flex;
 	}
 
+	#content-wrapper {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 100%;
+	}
+	#right-content {
+		max-width: 230px;
+		float: right;
+	}
+	#left-content {
+		float: left;
+		transition: width 3s ease-in-out;
+	}
 	@media (max-width: 433px) {
+		#content-wrapper {
+			flex-direction: column-reverse;
+		}
+
 		#left-content {
-			visibility: hidden;
-			width: 0;
+			width: 100%;
+			margin-bottom: 0rem;
+			display: flex;
+			opacity: 0;
+			transform: scale(0.7);
+			justify-content: center;
+			animation: scaleIn 50ms ease-in-out 500ms forwards;
 		}
 
 		#header-logo {
@@ -64,6 +91,49 @@
 		#github-icon {
 			right: calc(24px + 9px + 13px) !important;
 			top: 13px !important;
+		}
+
+		#right-content {
+			text-align: center;
+			opacity: 0;
+			animation: scaleIn 50ms ease-in-out 525ms forwards !important;
+		}
+
+		#right-content-subheader {
+			opacity: 0;
+			animation: scaleIn 50ms ease-in-out 550ms forwards !important;
+		}
+	}
+
+	#left-content {
+		float: left;
+		transition: width 3s ease-in-out;
+	}
+
+	#right-content {
+		max-width: 230px;
+		float: right;
+	}
+
+	#left-content {
+		float: left;
+		transition: width 1s ease-out;
+	}
+
+	#right-content {
+		max-width: 230px;
+		float: right;
+	}
+
+	@keyframes scaleIn {
+		from {
+			opacity: 0;
+			transform: scale(0.7);
+		}
+
+		to {
+			opacity: 1;
+			transform: scale(1);
 		}
 	}
 
@@ -92,16 +162,6 @@
 		padding-bottom: 10vh;
 	}
 
-	#left-content {
-		float: left;
-		transition: width 3s ease-in-out;
-	}
-
-	#right-content {
-		max-width: 230px;
-		float: right;
-	}
-
 	.header-icon {
 		position: fixed;
 		right: 13px;
@@ -128,6 +188,4 @@
 		user-select: none;
 		pointer-events: none;
 	}
-
-
 </style>

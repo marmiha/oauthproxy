@@ -28,7 +28,6 @@ jobs:
       - run: |
           cd web 
           npm ci
-          cp -rf build _build
           npm run build
       - name: Git Auto Commit Svelte Build
         uses: stefanzweifel/git-auto-commit-action@v4.16.0

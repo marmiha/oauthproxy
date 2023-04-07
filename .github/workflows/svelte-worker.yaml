@@ -1,0 +1,34 @@
+name: Web Build Worker (Svelte)
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - master
+      - dev
+
+jobs:
+  build-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    
+    steps:
+      - uses: actions/checkout
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: |
+          cd web 
+          npm ci
+          cp -rf build _build
+          npm run build
+          diff -r -q build _build
+
+

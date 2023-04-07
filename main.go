@@ -1,9 +1,10 @@
 package main
 
 import (
-	_ "embed"
+	"embed"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -20,16 +21,16 @@ import (
 //go:embed assets/terminal/logo_banner.txt
 var terminalAsciiArt string
 
+//go:embed all:web/build/*
+var embedWebsiteFS embed.FS
+var websiteFS, _ = fs.Sub(embedWebsiteFS, "web/build")
+
 func main() {
 	fmt.Print(terminalAsciiArt)
 	fmt.Print("\n\n")
 
 	// Router configuration.
 	r := chi.NewRouter()
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
 
 	// Load the .env file.
 	err := godotenv.Load()
@@ -62,27 +63,43 @@ func main() {
 	// Get the registry.
 	registrar := registry.NewRegistry(providers)
 
-	r.Route("/oauth", func(r chi.Router) {
-		r.Post("/{provider_id}", func(rw http.ResponseWriter, req *http.Request) {
-			// Get the provider id from the path.
-			providerId := identity.ProviderId(chi.URLParam(req, "provider_id"))
-			// Forward the request to the right provider.
-			registrar.ProxyServeHTTP(providerId, rw, req)
+	// Proxy Functionality.
+	r.Group(func(r chi.Router) {
+		r.Use(
+			middleware.RequestID,
+			middleware.RealIP,
+			middleware.Logger,
+			middleware.Recoverer,
+		)
+
+		r.Route("/oauth", func(r chi.Router) {
+			r.Post("/{provider_id}", func(rw http.ResponseWriter, req *http.Request) {
+				// Get the provider id from the path.
+				providerId := identity.ProviderId(chi.URLParam(req, "provider_id"))
+				// Forward the request to the right provider.
+				registrar.ProxyServeHTTP(providerId, rw, req)
+			})
+		})
+
+		// Get the supported providers.
+		r.Get("/supported", func(rw http.ResponseWriter, req *http.Request) {
+			providers := registrar.Providers()
+
+			enc := json.NewEncoder(rw)
+			if err := enc.Encode(providers); err != nil {
+				rw.WriteHeader(http.StatusInternalServerError)
+			}
 		})
 	})
 
-	// Get the supported providers.
-	r.Get("/supported", func(rw http.ResponseWriter, req *http.Request) {
-		providers := registrar.Providers()
-
-		enc := json.NewEncoder(rw)
-		if err := enc.Encode(providers); err != nil {
-			rw.WriteHeader(http.StatusInternalServerError)
-		}
+	// Static Svelte website files hosting.
+	websiteHandler := http.FileServer(http.FS(websiteFS))
+	r.Group(func(r chi.Router) {
+		r.Use(
+			middleware.Compress(5),
+		)
+		r.Handle("/*", websiteHandler)
 	})
-
-	fs := http.FileServer(http.Dir("./assets/static"))
-	r.Handle("/*", fs)
 
 	serverChan := make(chan error)
 

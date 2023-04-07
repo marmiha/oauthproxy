@@ -1,5 +1,5 @@
 .DEFAULT_GOAL: help
-.PHONY: help docker/build docker/build/% docker/run docker/run/%
+.PHONY: help docker/build docker/build/% docker/run docker/run/% web/build
 
 DOCKER_TAG := oauthproxy
 DOCKER_VERSION := latest
@@ -28,3 +28,11 @@ docker/run:
 docker/run/%:
 	@echo "\033[36m[Launching]\033[0m ${DOCKER_TAG}:\033[36m${*}\033[0m on port \033[36m${PORT}\033[0m"
 	@docker run -p ${PORT}:8081 ${DOCKER_TAG}:$*
+
+web/build: web/src
+	@echo "\033[36m[Building]\033[0m web"
+	@cd web && npm install && npm run build
+
+oauthproxy: web/build
+	@echo "\033[36m[Building]\033[0m oauthproxy"
+	@go build -o oauthproxy

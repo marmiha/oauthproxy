@@ -12,12 +12,13 @@ on:
       - dev
 
 jobs:
-  build-check:
+  build-and-push:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [18.x]
-    
+    permissions:
+      contents: write
     steps:
       - name: Check out source
         uses: actions/checkout@v3

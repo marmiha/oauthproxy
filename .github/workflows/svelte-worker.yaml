@@ -30,6 +30,12 @@ jobs:
           npm ci
           cp -rf build _build
           npm run build
-          diff -r -q build _build
+      - name: Git Auto Commit Svelte Build
+        uses: stefanzweifel/git-auto-commit-action@v4.16.0
+        with:
+          commit_message: "chore: build svelte frontend"
+          
+
+
 
 

@@ -10,6 +10,7 @@ COPY ./internal/ ./internal
 COPY ./pkg/ ./pkg
 COPY ./main.go ./main.go
 COPY ./assets ./assets
+COPY ./web/build ./web/build
 
 RUN go build -v -o /usr/local/bin/oauthproxy main.go
 
